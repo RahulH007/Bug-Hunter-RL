@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Project artefacts (these are generated — keep the dirs but ignore contents)
+models/*.pkl
+logs/*.csv
+logs/*.json
+plots/*.png
+
+# Keep the directory placeholders so git tracks the folder structure
+!models/.gitkeep
+!logs/.gitkeep
+!plots/.gitkeep
+
+# Streamlit / pyvis temp files
+.pyvis_tmp.html
+.streamlit/
+
+# OS
+.DS_Store
+Thumbs.db
