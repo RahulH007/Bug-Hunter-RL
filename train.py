@@ -179,7 +179,7 @@ def train(args: argparse.Namespace) -> Dict:
     out_path = Path(args.output)
     agent.save(out_path)
     if not args.quiet:
-        print(f"\n✓ Saved policy to {out_path} "
+        print(f"\n[OK] Saved policy to {out_path} "
               f"({agent.policy_size()} states with non-zero Q-values)")
 
     # --------------------------------------------------------------- #
