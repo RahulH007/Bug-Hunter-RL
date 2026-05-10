@@ -1,4 +1,4 @@
-# 🐛 Autonomous Software Bug Hunter — Reinforcement Learning
+#  Autonomous Software Bug Hunter — Reinforcement Learning
 
 > An RL agent that learns to navigate a software-module graph and discover bugs efficiently — with MLOps logging, baseline comparison, and an interactive Streamlit demo.
 
@@ -6,7 +6,7 @@ This project models a microservice-style codebase as a connected graph of module
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 bug_hunter_rl/
@@ -25,7 +25,7 @@ bug_hunter_rl/
 
 ---
 
-## 🎯 Project Components
+##  Project Components
 
 | Component | File | Description |
 |---|---|---|
@@ -38,7 +38,7 @@ bug_hunter_rl/
 
 ---
 
-## ⚙️ Environment Specification
+##  Environment Specification
 
 | Property | Value |
 |---|---|
@@ -51,7 +51,7 @@ bug_hunter_rl/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### 1. Install
 
@@ -138,7 +138,7 @@ Then click **Run Simulation** to watch the agent traverse the graph in real time
 
 ---
 
-## 📊 MLOps Logging Schema
+##  MLOps Logging Schema
 
 Each entry in `logs/results.json` looks like this:
 
@@ -178,6 +178,7 @@ The CSV log captures the same metrics one-row-per-run for easy comparison across
 
 ---
 
+<<<<<<< HEAD
 ## 📡 Monitoring Plan (Real-World Deployment)
 
 If this RL bug-hunter were deployed in a real-world continuous integration (CI) pipeline or live staging environment, we would monitor the following key metrics to ensure its health and effectiveness:
@@ -188,6 +189,9 @@ If this RL bug-hunter were deployed in a real-world continuous integration (CI) 
 ---
 
 ## SDG 9 Alignment
+=======
+##  SDG 9 Alignment
+>>>>>>> 870b774e37338642062ec29e67cef435b87c2c73
 
 This project supports **UN Sustainable Development Goal 9 — Industry, Innovation and Infrastructure**:
 
@@ -208,7 +212,11 @@ The same statement is printed by `evaluate.py` and shown in the Streamlit dashbo
 
 ---
 
+<<<<<<< HEAD
 ## Why Tabular Q-Learning (and not DQN)?
+=======
+##  Why Tabular Q-Learning (and not DQN)?
+>>>>>>> 870b774e37338642062ec29e67cef435b87c2c73
 
 The state representation — `(node_id, time_bucket, tested_bucket)` — has roughly **288 discrete states** with our 18-node graph and 4-bucket discretisation. A Q-table fits this comfortably:
 
@@ -219,4 +227,7 @@ The state representation — `(node_id, time_bucket, tested_bucket)` — has rou
 
 If you scale the graph to 100+ nodes or add richer per-node observations, swapping in a DQN would be a clean drop-in (the agent interface already exposes `select_action` / `update`).
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 870b774e37338642062ec29e67cef435b87c2c73
