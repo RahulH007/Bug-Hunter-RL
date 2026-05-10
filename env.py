@@ -1,26 +1,4 @@
-"""
-env.py
-======
-Custom RL Environment: Software Module Graph for Autonomous Bug Hunting.
 
-The environment models a software codebase as an undirected graph where each
-node represents a software module (e.g., Auth, Database, API, UI). Bugs are
-randomly seeded into nodes at the start of each episode, with certain
-"high-risk" modules (Database, API, Backend services) having a higher
-probability of containing bugs.
-
-The agent's task is to navigate the graph efficiently and "test" nodes to
-discover bugs while minimizing the number of steps taken.
-
-Design notes
-------------
-* No Gymnasium/Gym dependency — we expose a Gym-like interface (reset/step)
-  but stay self-contained so reproducibility is easy.
-* Discrete action space: at each step the agent chooses among the K
-  neighbours of the current node (action index = neighbour index).
-* The state returned by `reset()` / `step()` is a discrete integer tuple
-  the Q-Learning agent can hash directly into a Q-table.
-"""
 
 from __future__ import annotations
 

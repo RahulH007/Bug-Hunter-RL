@@ -111,6 +111,7 @@ def train(args: argparse.Namespace) -> Dict:
 
     rewards_per_episode: List[float] = []
     bugs_per_episode:    List[int]   = []
+    steps_per_episode:   List[int]   = []
     bugs_seeded_total:   int         = 0
     bugs_found_total:    int         = 0
     window_means:        List[Dict]  = []   # one entry per 100-episode window
@@ -147,6 +148,7 @@ def train(args: argparse.Namespace) -> Dict:
         agent.decay_epsilon()
         rewards_per_episode.append(ep_reward)
         bugs_per_episode.append(len(env.found_bugs))
+        steps_per_episode.append(env.steps_taken)
         bugs_seeded_total += env.total_bugs_at_start
         bugs_found_total  += len(env.found_bugs)
 
@@ -213,6 +215,7 @@ def train(args: argparse.Namespace) -> Dict:
             "first_avg_reward_100":   (window_means[0]["avg_reward_100"]
                                        if window_means else None),
             "bug_discovery_rate":     round(bug_discovery_rate, 4),
+            "avg_waiting_time":       round(float(np.mean(steps_per_episode)), 2),
             "bugs_found_total":       bugs_found_total,
             "bugs_seeded_total":      bugs_seeded_total,
             "policy_states_learned":  agent.policy_size(),
@@ -265,6 +268,7 @@ def append_csv_log(record: Dict, path: Path = CSV_LOG_PATH) -> None:
         "overall_avg_reward":  m["overall_avg_reward"],
         "final_avg_reward_100":m["final_avg_reward_100"],
         "bug_discovery_rate":  m["bug_discovery_rate"],
+        "avg_waiting_time":    m["avg_waiting_time"],
         "bugs_found_total":    m["bugs_found_total"],
         "bugs_seeded_total":   m["bugs_seeded_total"],
         "train_seconds":       record["train_seconds"],

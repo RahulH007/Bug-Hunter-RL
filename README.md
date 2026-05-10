@@ -178,7 +178,16 @@ The CSV log captures the same metrics one-row-per-run for easy comparison across
 
 ---
 
-## 🌍 SDG 9 Alignment
+## 📡 Monitoring Plan (Real-World Deployment)
+
+If this RL bug-hunter were deployed in a real-world continuous integration (CI) pipeline or live staging environment, we would monitor the following key metrics to ensure its health and effectiveness:
+1. **Model Drift & Bug Distribution:** Track the frequency and severity of bugs found per module over time. If a high-risk module suddenly shows zero bugs for weeks, the agent might be stuck in a suboptimal policy or the module's structure might have changed (requiring retraining).
+2. **Average Waiting Time (Steps to Discovery):** Monitor the average number of steps it takes the agent to find the first critical bug in a new build. An increasing trend would indicate the agent is becoming less efficient.
+3. **Execution Latency:** Track the time the agent takes to complete a full scan of the graph to ensure it meets CI time-budget constraints.
+
+---
+
+## SDG 9 Alignment
 
 This project supports **UN Sustainable Development Goal 9 — Industry, Innovation and Infrastructure**:
 
@@ -188,7 +197,7 @@ The same statement is printed by `evaluate.py` and shown in the Streamlit dashbo
 
 ---
 
-## 🧪 Reproducibility Checklist
+##  Reproducibility Checklist
 
 * [x] Pinned dependencies (`requirements.txt` and `environment.yml`)
 * [x] Master RNG seed flows through env, agent, and bug placement
@@ -199,7 +208,7 @@ The same statement is printed by `evaluate.py` and shown in the Streamlit dashbo
 
 ---
 
-## 🛠️ Why Tabular Q-Learning (and not DQN)?
+## Why Tabular Q-Learning (and not DQN)?
 
 The state representation — `(node_id, time_bucket, tested_bucket)` — has roughly **288 discrete states** with our 18-node graph and 4-bucket discretisation. A Q-table fits this comfortably:
 
@@ -210,8 +219,4 @@ The state representation — `(node_id, time_bucket, tested_bucket)` — has rou
 
 If you scale the graph to 100+ nodes or add richer per-node observations, swapping in a DQN would be a clean drop-in (the agent interface already exposes `select_action` / `update`).
 
----
 
-## 📜 License
-
-MIT — feel free to fork, extend, and reuse.
