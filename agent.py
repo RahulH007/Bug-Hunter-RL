@@ -36,9 +36,6 @@ import numpy as np
 State = Tuple[int, int, int, int]   # (node_id, time_bucket, tested_bucket, current_tested_flag)
 
 
-# =========================================================================== #
-# Q-Learning Agent                                                            #
-# =========================================================================== #
 class QLearningAgent:
     """
     Tabular Q-learning with epsilon-greedy exploration.
@@ -95,9 +92,7 @@ class QLearningAgent:
         self._rng = random.Random(seed)
         self._np_rng = np.random.default_rng(seed)
 
-    # ------------------------------------------------------------------ #
-    # Action selection                                                   #
-    # ------------------------------------------------------------------ #
+
     def select_action(
         self,
         state: State,
@@ -135,9 +130,7 @@ class QLearningAgent:
         best     = [i for i, q in enumerate(q_values) if q == max_q]
         return self._rng.choice(best)
 
-    # ------------------------------------------------------------------ #
-    # Learning update                                                    #
-    # ------------------------------------------------------------------ #
+
     def update(
         self,
         state:      State,
@@ -171,9 +164,7 @@ class QLearningAgent:
         """Call once per episode to anneal exploration."""
         self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
 
-    # ------------------------------------------------------------------ #
-    # Persistence                                                        #
-    # ------------------------------------------------------------------ #
+
     def save(self, path: str | Path) -> None:
         """Pickle the Q-table and hyperparameters to disk."""
         path = Path(path)
@@ -210,17 +201,12 @@ class QLearningAgent:
             agent.q_table[k] = np.asarray(v, dtype=np.float64)
         return agent
 
-    # ------------------------------------------------------------------ #
-    # Diagnostics                                                        #
-    # ------------------------------------------------------------------ #
+
     def policy_size(self) -> int:
         """Number of states for which we have non-trivial Q-values."""
         return sum(1 for v in self.q_table.values() if np.any(v != 0))
 
 
-# =========================================================================== #
-# Baseline: Random Walker                                                     #
-# =========================================================================== #
 class RandomWalkerAgent:
     """
     A trivial baseline: at every state, pick a uniformly random legal action.

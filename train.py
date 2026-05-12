@@ -38,9 +38,6 @@ from agent import QLearningAgent
 from env import BugHuntingEnv
 
 
-# --------------------------------------------------------------------------- #
-# Path constants — keep all artefacts under predictable locations             #
-# --------------------------------------------------------------------------- #
 ROOT       = Path(__file__).parent.resolve()
 MODEL_DIR  = ROOT / "models"
 LOG_DIR    = ROOT / "logs"
@@ -86,9 +83,7 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-# --------------------------------------------------------------------------- #
-# Training loop                                                               #
-# --------------------------------------------------------------------------- #
+
 def train(args: argparse.Namespace) -> Dict:
     """
     Run training and return a dict of summary metrics suitable for logging.
@@ -173,18 +168,14 @@ def train(args: argparse.Namespace) -> Dict:
 
     train_time = time.time() - t0
 
-    # --------------------------------------------------------------- #
-    # Save policy                                                     #
-    # --------------------------------------------------------------- #
+
     out_path = Path(args.output)
     agent.save(out_path)
     if not args.quiet:
         print(f"\n[OK] Saved policy to {out_path} "
               f"({agent.policy_size()} states with non-zero Q-values)")
 
-    # --------------------------------------------------------------- #
-    # Build the run record for MLOps logging                          #
-    # --------------------------------------------------------------- #
+
     overall_avg_reward = float(np.mean(rewards_per_episode))
     bug_discovery_rate = (bugs_found_total / bugs_seeded_total
                           if bugs_seeded_total else 0.0)
@@ -225,9 +216,7 @@ def train(args: argparse.Namespace) -> Dict:
     return run_record
 
 
-# --------------------------------------------------------------------------- #
-# MLOps logging utilities                                                     #
-# --------------------------------------------------------------------------- #
+
 def append_json_log(record: Dict, path: Path = JSON_LOG_PATH) -> None:
     """
     Append the run record to a JSON-array log file. We re-write the file
@@ -281,9 +270,6 @@ def append_csv_log(record: Dict, path: Path = CSV_LOG_PATH) -> None:
         writer.writerow(row)
 
 
-# --------------------------------------------------------------------------- #
-# Entry point                                                                 #
-# --------------------------------------------------------------------------- #
 def main() -> None:
     args = parse_args()
     print("=" * 64)

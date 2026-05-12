@@ -35,9 +35,7 @@ from env import BugHuntingEnv
 from evaluate import SDG_TEXT
 
 
-# --------------------------------------------------------------------------- #
-# Page setup                                                                  #
-# --------------------------------------------------------------------------- #
+
 st.set_page_config(
     page_title="Bug Hunter RL",
     page_icon="BH",
@@ -48,9 +46,7 @@ ROOT          = Path(__file__).parent.resolve()
 DEFAULT_POLICY = ROOT / "models" / "policy_v1.pkl"
 
 
-# --------------------------------------------------------------------------- #
-# Visual styling                                                              #
-# --------------------------------------------------------------------------- #
+
 NODE_COLORS = {
     "default":    "#3a86ff",   # untested, no known bug
     "tested":     "#a0a0a0",   # tested, no bug
@@ -138,9 +134,7 @@ def render_graph(env: BugHuntingEnv, height_px: int = 520) -> str:
     return net.generate_html()
 
 
-# --------------------------------------------------------------------------- #
-# Session-state helpers                                                       #
-# --------------------------------------------------------------------------- #
+
 def init_state() -> None:
     """Initialise all session-state slots the app uses."""
     defaults = {
@@ -220,9 +214,7 @@ def take_one_step() -> None:
         st.session_state.running      = False
 
 
-# --------------------------------------------------------------------------- #
-# UI                                                                          #
-# --------------------------------------------------------------------------- #
+
 def render_sidebar() -> Dict:
     st.sidebar.title("Configuration")
 
@@ -330,9 +322,6 @@ def render_action_log() -> None:
     st.dataframe(rows, hide_index=True, use_container_width=True)
 
 
-# --------------------------------------------------------------------------- #
-# Main                                                                        #
-# --------------------------------------------------------------------------- #
 def main() -> None:
     init_state()
     cfg = render_sidebar()
@@ -367,7 +356,6 @@ def main() -> None:
     if btn4.button("Stop", use_container_width=True):
         st.session_state.running = False
 
-    # ----- Layout ------------------------------------------------------ #
     left, right = st.columns([2, 1])
 
     with left:
@@ -390,7 +378,6 @@ def main() -> None:
                 f"Bugs found = {len(env.found_bugs)} / {env.total_bugs_at_start}"
             )
 
-    # ----- SDG-9 panel ------------------------------------------------- #
     with st.expander("SDG 9 - Industry, Innovation and Infrastructure",
                      expanded=False):
         st.text(SDG_TEXT)
@@ -400,11 +387,7 @@ def main() -> None:
         f"Seed: {cfg['seed']}  ·  Bug-multiplier: {cfg['bug_mult']}"
     )
 
-    # ----- Auto-run loop ---------------------------------------------- #
-    # We drive auto-play by taking one step, sleeping briefly, then
-    # asking Streamlit to rerun. This pattern keeps the UI responsive
-    # (Stop button is checked between iterations) and is the canonical
-    # way to do animation in Streamlit without external loops.
+
     if st.session_state.running and not st.session_state.episode_done:
         take_one_step()
         time.sleep(cfg["step_delay"])

@@ -47,9 +47,6 @@ PLOT_DIR.mkdir(parents=True, exist_ok=True)
 DEFAULT_POLICY = ROOT / "models" / "policy_v1.pkl"
 
 
-# --------------------------------------------------------------------------- #
-# SDG-9 alignment text (also reused by the Streamlit dashboard)               #
-# --------------------------------------------------------------------------- #
 SDG_TEXT = (
     "SDG 9 — Industry, Innovation and Infrastructure\n"
     "------------------------------------------------\n"
@@ -66,9 +63,7 @@ SDG_TEXT = (
 )
 
 
-# =========================================================================== #
-# Per-episode rollout                                                         #
-# =========================================================================== #
+
 @dataclass
 class EpisodeStats:
     reward:        float
@@ -105,9 +100,6 @@ def run_episode(
     )
 
 
-# =========================================================================== #
-# Evaluation harness                                                          #
-# =========================================================================== #
 def evaluate_agents(
     n_episodes:   int,
     policy_path:  Path,
@@ -144,9 +136,7 @@ def evaluate_agents(
     return rl_stats, base_stats
 
 
-# =========================================================================== #
-# Reporting                                                                   #
-# =========================================================================== #
+
 def summarise(stats: List[EpisodeStats]) -> Dict[str, float]:
     rewards = np.array([s.reward for s in stats], dtype=float)
     steps   = np.array([s.steps  for s in stats], dtype=float)
@@ -204,9 +194,6 @@ def print_comparison_table(
     print("=" * 72)
 
 
-# =========================================================================== #
-# Plots                                                                       #
-# =========================================================================== #
 def plot_average_reward(
     rl_stats:   List[EpisodeStats],
     base_stats: List[EpisodeStats],
@@ -275,9 +262,7 @@ def plot_bugs_over_time(
     plt.close(fig)
 
 
-# --------------------------------------------------------------------------- #
-# CLI                                                                         #
-# --------------------------------------------------------------------------- #
+
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Evaluate RL agent vs baseline.")
     p.add_argument("--episodes", type=int,   default=100,

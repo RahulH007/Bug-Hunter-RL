@@ -146,9 +146,6 @@ class BugHuntingEnv:
         self.steps_taken: int           = 0
         self.total_bugs_at_start: int   = 0
 
-    # ------------------------------------------------------------------ #
-    # Graph construction                                                 #
-    # ------------------------------------------------------------------ #
     def _build_graph(self) -> nx.Graph:
         """
         Build a connected graph that loosely resembles a microservice
@@ -260,9 +257,7 @@ class BugHuntingEnv:
         )
         return StepResult(self._encode_state(), reward, done, info)
 
-    # ------------------------------------------------------------------ #
-    # State encoding & action helpers                                    #
-    # ------------------------------------------------------------------ #
+
     def _encode_state(self) -> Tuple[int, int, int, int]:
         """
         Discretise the raw state into a Q-table-friendly tuple:
@@ -290,9 +285,6 @@ class BugHuntingEnv:
         """Sorted list of neighbour node-ids for the current node."""
         return sorted(self.graph.neighbors(self.current_node))
 
-    # ------------------------------------------------------------------ #
-    # Introspection helpers (used by the Streamlit UI & evaluator)       #
-    # ------------------------------------------------------------------ #
     def total_possible_reward(self) -> int:
         """Maximum reward an oracle could obtain on the current episode."""
         return sum(b.reward for b in self.bugs.values())
