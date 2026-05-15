@@ -1,0 +1,15 @@
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {1.1}{\ignorespaces High-level system architecture of the Bug Hunter RL project.}}{3}{figure.caption.1}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Watts--Strogatz graph of 18 software modules coloured by risk (red = high, orange = medium, green = low).}}{6}{figure.caption.2}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Low-level class structure showing \texttt {BugHuntingEnv}, \texttt {QLearningAgent}, \texttt {RandomWalkerAgent}, and \texttt {Trainer} with their attributes and methods.}}{8}{figure.caption.3}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Learning curve: raw episode reward (shaded) and 100-episode rolling average (solid) over 3000 training episodes. Key milestones are annotated.}}{14}{figure.caption.6}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Epsilon-greedy decay schedule. Exploration rate falls from 1.0 to the floor of 0.05 at approximately episode~600, after which the agent exploits its learned policy.}}{14}{figure.caption.7}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Training progress by 100-episode windows. Green cells indicate strong performance; orange cells indicate transitional periods.}}{16}{figure.caption.10}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Left: per-node bug spawn probability weights (red = high risk). Right: state space dimensionality breakdown.}}{16}{figure.caption.11}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Head-to-head evaluation over 100 episodes. The RL agent outperforms the random-walker on all three metrics.}}{17}{figure.caption.12}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces DVC two-stage pipeline (bottom) and GitHub Actions CI/CD workflow (top banner).}}{18}{figure.caption.14}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Screenshot: software module graph rendered by NetworkX, coloured by node risk weight. Hub nodes (Database, API\_Gateway) are visually prominent due to higher degree and larger circle size.}}{21}{figure.caption.15}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Screenshot: learning curve from the primary training run showing convergence of the rolling reward average.}}{21}{figure.caption.16}%

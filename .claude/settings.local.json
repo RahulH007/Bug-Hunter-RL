@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(python3 -c ' *)",
+      "Read(//mnt/e/**)",
+      "Bash(python3 *)",
+      "Bash(pip install *)",
+      "Bash(pip3 show *)",
+      "Bash(E:/bug_hunter_rl/venv/Scripts/python.exe --version)",
+      "Bash(E:/bug_hunter_rl/venv/Scripts/python.exe *)",
+      "Bash(python *)",
+      "Bash(pdflatex --version)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(cd /d E:\\\\bug_hunter_rl)",
+      "Bash(pdflatex -interaction=nonstopmode report.tex)"
+    ]
+  }
+}
