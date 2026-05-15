@@ -1,0 +1,23 @@
+# DVC parameter file — single source of truth for experiment config.
+# Change values here; run `dvc repro` to re-execute the pipeline.
+
+train:
+  episodes: 2000
+  max_steps: 30
+  n_nodes: 18
+  lr: 0.1
+  gamma: 0.95
+  epsilon: 1.0
+  epsilon_min: 0.05
+  epsilon_decay: 0.995
+  bug_multiplier: 1.0
+  seed: 42
+  output: models/policy_v1.pkl
+
+evaluate:
+  episodes: 100
+  max_steps: 30
+  n_nodes: 18
+  bug_multiplier: 1.0
+  seed: 42
+  policy: models/policy_v1.pkl

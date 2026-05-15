@@ -24,11 +24,13 @@ Usage
 from __future__ import annotations
 
 import argparse
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Tuple
 
 import matplotlib
+import mlflow
 
 # Use a non-interactive backend so the script works on headless servers
 # (CI, evaluators' machines without a display) — figures still save fine.
@@ -275,6 +277,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--seed",     type=int,   default=42,
                    help="Base seed — must match the env config used in training "
                         "for like-for-like comparison.")
+    p.add_argument("--mlflow-uri", type=str, default=None,
+                   help="MLflow tracking URI (default: local ./mlruns file store).")
     return p.parse_args()
 
 
@@ -311,6 +315,44 @@ def main() -> None:
     plot_bugs_over_time(rl_stats, base_stats, bugs_plot)
     print(f"  Saved plot: {reward_plot}")
     print(f"  Saved plot: {bugs_plot}")
+
+    # ── Save eval_metrics.json for DVC metric tracking ─────────────────────
+    baseline_reward = base_summary["avg_reward"]
+    improvement_pct = round(
+        100.0 * (rl_summary["avg_reward"] - baseline_reward) / max(abs(baseline_reward), 1e-9),
+        2,
+    )
+    eval_metrics = {
+        "rl_avg_reward":           round(rl_summary["avg_reward"], 3),
+        "rl_std_reward":           round(rl_summary["std_reward"], 3),
+        "rl_avg_steps":            round(rl_summary["avg_steps"], 3),
+        "rl_discovery_rate":       round(rl_summary["discovery_rate"], 4),
+        "baseline_avg_reward":     round(base_summary["avg_reward"], 3),
+        "baseline_discovery_rate": round(base_summary["discovery_rate"], 4),
+        "improvement_pct":         improvement_pct,
+    }
+    eval_metrics_path = ROOT / "logs" / "eval_metrics.json"
+    with open(eval_metrics_path, "w", encoding="utf-8") as f:
+        json.dump(eval_metrics, f, indent=2)
+    print(f"  Saved metrics: {eval_metrics_path}")
+
+    # ── MLflow logging ─────────────────────────────────────────────────────
+    if args.mlflow_uri:
+        mlflow.set_tracking_uri(args.mlflow_uri)
+    mlflow.set_experiment("bug-hunter-rl-eval")
+    with mlflow.start_run(run_name=f"eval_{args.episodes}ep_s{args.seed}"):
+        mlflow.log_params({
+            "eval_episodes":  args.episodes,
+            "policy":         policy_path.name,
+            "seed":           args.seed,
+            "n_nodes":        args.n_nodes,
+            "max_steps":      args.max_steps,
+            "bug_multiplier": args.bug_multiplier,
+        })
+        mlflow.log_metrics(eval_metrics)
+        mlflow.log_artifact(str(reward_plot))
+        mlflow.log_artifact(str(bugs_plot))
+        mlflow.log_artifact(str(eval_metrics_path))
 
     # SDG-9 alignment statement
     print()

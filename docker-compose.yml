@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  # ── Streamlit dashboard ──────────────────────────────────────────────────
+  app:
+    build: .
+    container_name: bug-hunter-app
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./models:/app/models        # persisted policy files
+      - ./logs:/app/logs            # persisted experiment logs
+      - ./plots:/app/plots          # persisted evaluation plots
+      - ./mlruns:/app/mlruns        # shared MLflow run store
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── MLflow tracking server ───────────────────────────────────────────────
+  mlflow:
+    image: python:3.11-slim
+    container_name: bug-hunter-mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlflow/mlruns
+    command: >
+      bash -c "pip install --quiet mlflow &&
+               mlflow server
+               --host 0.0.0.0
+               --port 5000
+               --backend-store-uri /mlflow/mlruns
+               --default-artifact-root /mlflow/mlruns"
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  # ── One-off training job (run with: docker compose run trainer) ──────────
+  trainer:
+    build: .
+    container_name: bug-hunter-trainer
+    volumes:
+      - ./models:/app/models
+      - ./logs:/app/logs
+      - ./mlruns:/app/mlruns
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    entrypoint: ["python", "train.py", "--episodes", "5000", "--seed", "42", "--quiet"]
+    profiles:
+      - training   # only starts with: docker compose --profile training up trainer

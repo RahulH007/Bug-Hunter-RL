@@ -1,0 +1,65 @@
+stages:
+  train:
+    cmd: >-
+      python train.py
+      --episodes ${train.episodes}
+      --max-steps ${train.max_steps}
+      --n-nodes ${train.n_nodes}
+      --lr ${train.lr}
+      --gamma ${train.gamma}
+      --epsilon ${train.epsilon}
+      --epsilon-min ${train.epsilon_min}
+      --epsilon-decay ${train.epsilon_decay}
+      --bug-multiplier ${train.bug_multiplier}
+      --seed ${train.seed}
+      --output ${train.output}
+      --quiet
+    deps:
+      - train.py
+      - env.py
+      - agent.py
+    params:
+      - params.yaml:
+          - train.episodes
+          - train.max_steps
+          - train.n_nodes
+          - train.lr
+          - train.gamma
+          - train.epsilon
+          - train.epsilon_min
+          - train.epsilon_decay
+          - train.bug_multiplier
+          - train.seed
+    outs:
+      - models/policy_v1.pkl
+    metrics:
+      - logs/results.json:
+          cache: false
+
+  evaluate:
+    cmd: >-
+      python evaluate.py
+      --episodes ${evaluate.episodes}
+      --max-steps ${evaluate.max_steps}
+      --n-nodes ${evaluate.n_nodes}
+      --bug-multiplier ${evaluate.bug_multiplier}
+      --seed ${evaluate.seed}
+      --policy ${evaluate.policy}
+    deps:
+      - evaluate.py
+      - env.py
+      - agent.py
+      - models/policy_v1.pkl
+    params:
+      - params.yaml:
+          - evaluate.episodes
+          - evaluate.seed
+          - evaluate.n_nodes
+          - evaluate.max_steps
+          - evaluate.bug_multiplier
+    outs:
+      - plots/avg_reward_over_episodes.png
+      - plots/bugs_found_over_time.png
+    metrics:
+      - logs/eval_metrics.json:
+          cache: false

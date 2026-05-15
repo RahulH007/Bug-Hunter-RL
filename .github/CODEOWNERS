@@ -1,0 +1,15 @@
+# Global fallback — every file requires review from the team lead
+* @RahulH007
+
+# Core RL logic — requires review from the ML lead
+env.py    @RahulH007
+agent.py  @RahulH007
+train.py  @RahulH007
+
+# CI/CD pipelines — requires review from the DevOps lead
+.github/workflows/ @RahulH007
+
+# Documentation — anyone on the team can approve
+docs/              @RahulH007
+README.md          @RahulH007
+CONTRIBUTING.md    @RahulH007

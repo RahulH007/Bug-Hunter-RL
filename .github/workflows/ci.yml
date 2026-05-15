@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "feature/**"
+      - "release/**"
+      - "hotfix/**"
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  lint:
+    name: Lint (flake8)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install lint deps
+        run: pip install flake8
+
+      - name: Run flake8
+        run: |
+          flake8 env.py agent.py train.py evaluate.py monitoring.py rollback.py \
+            --max-line-length=120 \
+            --extend-ignore=W503,W504,E203
+
+  train-and-evaluate:
+    name: Smoke Train + Evaluate
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Smoke-train (100 episodes)
+        run: python train.py --episodes 100 --quiet
+
+      - name: Evaluate (20 episodes)
+        run: python evaluate.py --episodes 20
+
+      - name: Run monitoring check
+        run: python monitoring.py
+
+      - name: Upload trained policy
+        uses: actions/upload-artifact@v4
+        with:
+          name: policy-${{ github.sha }}
+          path: models/policy_v1.pkl
+          if-no-files-found: error
+
+      - name: Upload evaluation plots
+        uses: actions/upload-artifact@v4
+        with:
+          name: plots-${{ github.sha }}
+          path: plots/
+
+      - name: Upload MLflow run store
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlruns-${{ github.sha }}
+          path: mlruns/
+          if-no-files-found: ignore
+
+  dvc-pipeline:
+    name: DVC Pipeline (full run)
+    runs-on: ubuntu-latest
+    needs: train-and-evaluate
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies (incl. dvc)
+        run: pip install -r requirements.txt
+
+      - name: Initialise DVC (no scm integration needed in CI)
+        run: dvc init --no-scm
+
+      - name: Run DVC pipeline
+        run: dvc repro --no-commit
+
+      - name: Show DVC metrics
+        run: dvc metrics show || true

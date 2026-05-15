@@ -1,0 +1,7 @@
+# DVC ignores these paths when staging / hashing files.
+venv/
+.venv/
+__pycache__/
+*.pyc
+.git/
+mlruns/

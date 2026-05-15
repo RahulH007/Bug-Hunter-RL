@@ -32,6 +32,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List
 
+import mlflow
 import numpy as np
 
 from agent import QLearningAgent
@@ -80,6 +81,8 @@ def parse_args() -> argparse.Namespace:
                    help="Where to save the trained policy pickle.")
     p.add_argument("--quiet",         action="store_true",
                    help="Suppress per-window progress output.")
+    p.add_argument("--mlflow-uri",    type=str, default=None,
+                   help="MLflow tracking URI (default: local ./mlruns file store).")
     return p.parse_args()
 
 
@@ -279,8 +282,38 @@ def main() -> None:
         print(f"  {k:<16}: {v}")
     print("-" * 64)
 
-    record = train(args)
+    # ── MLflow setup ───────────────────────────────────────────────────────
+    if args.mlflow_uri:
+        mlflow.set_tracking_uri(args.mlflow_uri)
+    mlflow.set_experiment("bug-hunter-rl")
 
+    with mlflow.start_run(run_name=f"train_{args.episodes}ep_s{args.seed}"):
+        record = train(args)
+
+        # Log hyperparameters
+        mlflow.log_params(record["hyperparameters"])
+
+        # Log scalar summary metrics
+        mlflow.log_metrics({
+            "overall_avg_reward":   record["metrics"]["overall_avg_reward"],
+            "final_avg_reward_100": record["metrics"]["final_avg_reward_100"] or 0.0,
+            "bug_discovery_rate":   record["metrics"]["bug_discovery_rate"],
+            "avg_waiting_time":     record["metrics"]["avg_waiting_time"],
+            "policy_states":        float(record["metrics"]["policy_states_learned"]),
+        })
+
+        # Log per-100-episode window metrics as a step series
+        for w in record["windows_per_100"]:
+            mlflow.log_metrics(
+                {"reward_window": w["avg_reward_100"], "epsilon": w["epsilon"]},
+                step=w["episode"],
+            )
+
+        # Log the trained policy as an artefact
+        mlflow.log_artifact(record["policy_path"])
+        mlflow.set_tag("custom_run_id", record["run_id"])
+
+    # ── Persist structured logs (kept alongside MLflow for plain-text audit) ─
     append_json_log(record)
     append_csv_log(record)
 
@@ -291,6 +324,7 @@ def main() -> None:
     print(f"  Bug discovery rate: {record['metrics']['bug_discovery_rate']:.2%}")
     print(f"  Logged to         : {JSON_LOG_PATH}")
     print(f"                      {CSV_LOG_PATH}")
+    print(f"  MLflow experiment : bug-hunter-rl")
     print("=" * 64)
 
 
